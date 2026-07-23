@@ -1,0 +1,27 @@
+def manifestProperties = [
+        mod_group      : project.mod_group,
+        mod_name       : project.mod_name,
+        mod_version    : project.mod_version,
+        mod_description: project.mod_description,
+        hytale_version : project.hytale_version
+]
+
+processResources {
+    inputs.properties manifestProperties
+
+    // Replace placeholders after resources are copied. This avoids Gradle's
+    // MatchingCopyAction, which IntelliJ IDEA cannot model during sync.
+    doLast {
+        def manifestFile = new File(destinationDir, "manifest.json")
+        if (!manifestFile.exists()) {
+            return
+        }
+
+        def manifestText = manifestFile.getText("UTF-8")
+        manifestProperties.each { key, value ->
+            def placeholder = "\$" + "{" + key + "}"
+            manifestText = manifestText.replace(placeholder, value.toString())
+        }
+        manifestFile.setText(manifestText, "UTF-8")
+    }
+}

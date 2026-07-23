@@ -1,0 +1,54 @@
+import org.gradle.internal.os.OperatingSystem
+
+// Detect the Hytale installation, while allowing a custom path through
+// -PhytaleHome=... or -Phytale_home=....
+def configuredHytaleHome = project.findProperty("hytaleHome") ?: project.findProperty("hytale_home")
+def detectedHytaleHome = configuredHytaleHome
+
+if (!detectedHytaleHome) {
+    def os = OperatingSystem.current()
+    if (os.isWindows()) {
+        detectedHytaleHome = "${System.getProperty("user.home")}/AppData/Roaming/Hytale"
+    } else if (os.isMacOsX()) {
+        detectedHytaleHome = "${System.getProperty("user.home")}/Library/Application Support/Hytale"
+    } else if (os.isLinux()) {
+        detectedHytaleHome = "${System.getProperty("user.home")}/.var/app/com.hypixel.HytaleLauncher/data/Hytale"
+        if (!project.file(detectedHytaleHome).exists()) {
+            detectedHytaleHome = "${System.getProperty("user.home")}/.local/share/Hytale"
+        }
+    }
+}
+
+project.ext.hytaleHome = detectedHytaleHome
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "HytaleRelease"
+        url = uri("https://maven.hytale.com/release")
+    }
+    maven {
+        name = "HytalePreRelease"
+        url = uri("https://maven.hytale.com/pre-release")
+    }
+}
+
+dependencies {
+    compileOnly("com.hypixel.hytale:Server:${project.hytale_version}")
+    runtimeOnly("com.hypixel.hytale:Server:${project.hytale_version}")
+}
+
+project.ext.createServerRunArguments = { String srcDir ->
+    if (!project.hytaleHome || !project.file(project.hytaleHome).exists()) {
+        throw new GradleException(
+                "Failed to find Hytale. Set -PhytaleHome=<path> or -Phytale_home=<path>. " +
+                        "Currently looking in ${project.hytaleHome}"
+        )
+    }
+
+    return "--allow-op " +
+            "--disable-file-watcher " +
+            "--disable-sentry " +
+            "--assets=\"${project.hytaleHome}/install/${project.hytale_patchline}/package/game/latest/Assets.zip\" " +
+            "--mods=\"${srcDir}\""
+}

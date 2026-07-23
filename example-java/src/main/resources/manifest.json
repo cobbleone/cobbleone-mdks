@@ -1,0 +1,25 @@
+{
+  "Main": "com.cobbleone.template.ExamplePlugin",
+  "Group": "${mod_group}",
+  "Name": "${mod_name}",
+  "Version": "${mod_version}",
+  "Description": "${mod_description}",
+  "Website": "",
+  "Authors": [
+    {
+      "Name": "",
+      "Email": "",
+      "Url": ""
+    }
+  ],
+  "ServerVersion": "~${hytale_version}",
+  "Dependencies": {
+    "Hytale:AssetModule": "*",
+    "Hytale:EntityModule": "*",
+    "Hytale:CosmeticsModule": "*",
+    "Hytale:CommonAssetModule": "*"
+  },
+  "OptionalDependencies": {},
+  "IncludesAssetPack": true,
+  "DisabledByDefault": false
+}
