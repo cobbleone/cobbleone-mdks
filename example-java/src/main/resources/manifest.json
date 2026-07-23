@@ -4,11 +4,10 @@
   "Name": "${mod_name}",
   "Version": "${mod_version}",
   "Description": "${mod_description}",
-  "Website": "",
+  "Website": "https://github.com/cobbleone",
   "Authors": [
     {
-      "Name": "",
-      "Email": "",
+      "Name": "saultsc",
       "Url": ""
     }
   ],
